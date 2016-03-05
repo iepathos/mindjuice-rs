@@ -235,3 +235,22 @@ pub fn execute_brainfuck<O, I>(instructions: Vec<Instruction>, mut output: O, mu
     // We reached the maximum iteration count
     return Ok(ExecutionTerminationCondition::MaximumIterationsReached);
 }
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_execute_brainfuck() {
+        use std::io;
+
+        let instructions = mindjuice::parse_instructions("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.".chars()).unwrap();
+        let mut buffer = Vec::new();
+        execute_brainfuck(instructions, // Instructions vec
+                                     &mut buffer, // io::Write to send output to
+                                     io::empty(), // io::Read to get input from
+                                     30000000u64 // Maximum program iterations to run before returning
+                                     ).unwrap();
+
+        assert_eq!(&buffer[..], b"Hello World!\n");
+    }
+}
